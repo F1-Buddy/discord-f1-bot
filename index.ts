@@ -44,6 +44,7 @@ console.log(dateArr[2]+' = day')
 
 //function that sets a string with current date
 function setDate() {
+    dateTime = ''
     dateTime += dateArr[0]
     if (dateArr[1] < 10) {
         dateTime += "0" + (dateArr[1] + 1)
@@ -72,6 +73,7 @@ function setDate() {
 
 client.on('messageCreate', (message) => {
     if (message.content === botChar + 'n' || message.content === botChar + 'next') {
+        calendarAsString = ''
         calendarAsString = fs.readFileSync(calendarPath).toString();
         calSubs = calendarAsString.split('\n')
         for (let i = 0; i < calSubs.length; i++) {
