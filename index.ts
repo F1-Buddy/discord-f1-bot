@@ -1,5 +1,6 @@
 import DiscordJS, { ClientVoiceManager, IntentsBitField, time } from 'discord.js'
 import dotenv from 'dotenv'
+
 var fs = require('fs');
 dotenv.config()
 
@@ -23,7 +24,7 @@ client.on('ready', () => {
     console.log('Bot ready')
 })
 
-var calendarPath = 'C:/Users/rakib/Documents/code/discord-f1-bot/calendar/Formula_1_Official_Calendar.ics'
+var calendarPath = './calendar/Formula_1_Official_Calendar.ics'
 
 var calendarAsString: string
 var calSubs: any[] = []
@@ -58,16 +59,8 @@ function setDate() {
     else {
         dateTime += (dateArr[2])
     }
-    ///
-    ///
-    ///
-    ///                 FOR TESTING PURPOSES
-    ///                 REMOVE LATER
-    ///
-    ///
-    ///
-    ///                 dateTime = '20220220'
-                console.log(dateTime +' = dateTime string')
+
+        console.log(dateTime +' = dateTime string')
 }
 
 
@@ -95,7 +88,7 @@ client.on('messageCreate', (message) => {
 
         for (let i = 0; i < eventTimes.length; i++) {
             if (eventTimes[i].includes(dateTime)) {
-                var nextEventName = eventTimes[i + 1].substring(0, eventTimes[i + 1].length - 1);
+                var nextEventName = eventTimes[i + 1].substring(0, eventTimes[i + 1].length);
                 var nextEventTime = eventTimes[i].substring(9, 15)
                 var tempTime = nextEventTime.substring(0, 2) + ':' + nextEventTime.substring(2, 4) + ':' + nextEventTime.substring(4, 6)
                 nextEventTime = tempTime
