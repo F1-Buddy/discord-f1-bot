@@ -29,17 +29,24 @@ var calendarAsString: string
 var calSubs: any[] = []
 var eventTimes: any[] = []
 var currentDate = new Date();
+console.log(currentDate)
 var dateTime = ""
 var dateArr: number[] = []
 var currentYear = currentDate.getFullYear()
 var currentMonth = currentDate.getMonth()
 var currentDay = currentDate.getDate()
+
+
 dateArr.push(currentYear)
 console.log(dateArr[0]+' = year')
 dateArr.push(currentMonth)
 console.log(dateArr[1]+' = month')
 dateArr.push(currentDay)
 console.log(dateArr[2]+' = day')
+
+
+// new solution using Date() objects instead of comparing strings
+var eventDateArr: Date[] = []
 
 
 //function that sets a string with current date
@@ -78,6 +85,13 @@ client.on('messageCreate', (message) => {
         calSubs = calendarAsString.split('\n')
         for (let i = 0; i < calSubs.length; i++) {
             if (calSubs[i].includes('DTSTART;')) {
+                var eventYear = calSubs[i].substring(27,31)
+                var eventMonth = calSubs[i].substring(31,33) - 1
+                var eventDay = calSubs[i].substring(33,35)
+                //time is broken
+                var eventHour = calSubs[i].substring(36,38)
+                var eventMinute = calSubs[i].substring(38,40)
+                eventDateArr.push(new Date(eventYear,eventMonth,eventDay,eventHour,eventMinute))
                 eventTimes.push(calSubs[i].substring(27))
                 eventTimes.push(calSubs[i + 2].substring(8))
             }
