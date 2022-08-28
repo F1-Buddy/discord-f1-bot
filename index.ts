@@ -99,9 +99,7 @@ client.on('messageCreate', (message) => {
                 var nextEventTime = eventTimes[i].substring(9, 15)
                 var tempTime = nextEventTime.substring(0, 2) + ':' + nextEventTime.substring(2, 4) + ':' + nextEventTime.substring(4, 6)
                 nextEventTime = tempTime
-                message.reply({
-                    content: 'Next event is ' + nextEventName + ' at ' + nextEventTime + ' British time.',
-                })
+                
             }
             else {
                 for (let i = 0; i < 32; i++) {
@@ -110,6 +108,9 @@ client.on('messageCreate', (message) => {
             }
 
         }
+        message.reply({
+            content: 'Next event is ' + nextEventName + ' at ' + nextEventTime + ' British time.',
+        })
     }
 
 
