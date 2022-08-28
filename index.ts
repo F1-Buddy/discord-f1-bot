@@ -1,6 +1,10 @@
 import DiscordJS, { ClientVoiceManager, IntentsBitField, time } from 'discord.js'
 import dotenv from 'dotenv'
 
+import { RequestInfo, RequestInit } from "node-fetch";
+
+const fetch = (url: RequestInfo, init?: RequestInit) =>  import("node-fetch").then(({ default: fetch }) => fetch(url, init));
+
 var fs = require('fs');
 dotenv.config()
 
@@ -36,11 +40,11 @@ var currentYear = currentDate.getFullYear()
 var currentMonth = currentDate.getMonth()
 var currentDay = currentDate.getDate()
 dateArr.push(currentYear)
-console.log(dateArr[0]+' = year')
+// console.log(dateArr[0]+' = year')
 dateArr.push(currentMonth)
-console.log(dateArr[1]+' = month')
+// console.log(dateArr[1]+' = month')
 dateArr.push(currentDay)
-console.log(dateArr[2]+' = day')
+// console.log(dateArr[2]+' = day')
 
 
 //function that sets a string with current date
@@ -60,9 +64,27 @@ function setDate() {
         dateTime += (dateArr[2])
     }
 
-        console.log(dateTime +' = dateTime string')
+        // console.log(dateTime +' = dateTime string')
 }
 
+// API Testing
+// function getSchedule() {
+//     fetch("https://jsonplaceholder.typicode.com/todos")
+//     .then(
+//       (response) => response.json()
+//     )
+//     .then(
+//       (toDoListArray) => console.log(toDoListArray)
+//     );
+// }
+
+// fetch("https://jsonplaceholder.typicode.com/todos")
+// .then(
+//   (response) => response.json()
+// )
+// .then(
+//   (toDoListArray) => console.log(toDoListArray)
+// );
 
 client.on('messageCreate', (message) => {
     if (message.content === botChar + 'n' || message.content === botChar + 'next') {
