@@ -23,7 +23,7 @@ client.on('ready', () => {
     console.log('Bot ready')
 })
 
-var calendarPath = 'C:/Users/rakib/Documents/code/discord-f1-bot/calendar/Formula_1_Official_Calendar.ics'
+var calendarPath = 'calendar/Formula_1_Official_Calendar.ics'
 
 var calendarAsString: string
 var calSubs: any[] = []
