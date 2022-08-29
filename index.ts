@@ -37,28 +37,33 @@ var calendarPath = 'calendar/Formula_1_Official_Calendar.ics'
 
 //                  Function for checking driver stats
 const drivers = new Map([
-    [33, 'Max_Verstappen'],
-    [1, 'Max_Verstappen'],
-    [11, 'Sergio_Pérez'],
-    [16, 'Charles_Leclerc'],
-    [55, 'Carlos_Sainz_Jr.'],
-    [63, 'George_Russell_(racing_driver)'],
-    [44, 'Lewis_Hamilton'],
-    [23, 'Alex_Albon'],
-    [6, 'Nicholas_Latifi'],
-    [14, 'Fernando_Alonso'],
-    [30, 'Esteban_Ocon'],
-    [77, 'Valtteri_Bottas'],
-    [24, 'Zhou_Guanyu'],
-    [10, 'Pierre_Gasly'],
-    [22, 'Yuki_Tsunoda'],
-    [20, 'Kevin_Magnussen'],
-    [47, 'Mick_Schumacher'],
-    [4, 'Lando_Norris'],
-    [3, 'Daniel_Ricciardo'],
-    [18, 'Lance_Stroll'],
-    [5, 'Sebastian_Vettel']
+    [33, ['Max_Verstappen','VER']],
+    [1, ['Max_Verstappen','VER']],
+    [11, ['Sergio_Pérez','PER']],
+    [16, ['Charles_Leclerc','LEC']],
+    [55, ['Carlos_Sainz_Jr.','SAI']],
+    [63, ['George_Russell_(racing_driver)','RUS']],
+    [44, ['Lewis_Hamilton','HAM']],
+    [23, ['Alex_Albon','ALB']],
+    [6, ['Nicholas_Latifi','LAT']],
+    [14, ['Fernando_Alonso','ALO']],
+    [30, ['Esteban_Ocon','OCO']],
+    [77, ['Valtteri_Bottas','BOT']],
+    [24, ['Zhou_Guanyu','ZHO']],
+    [10, ['Pierre_Gasly','GAS']],
+    [22, ['Yuki_Tsunoda','TSU']],
+    [20, ['Kevin_Magnussen','MAG']],
+    [47, ['Mick_Schumacher','SCH']],
+    [4, ['Lando_Norris','NOR']],
+    [3, ['Daniel_Ricciardo','RIC']],
+    [18, ['Lance_Stroll','STR']],
+    [5, ['Sebastian_Vettel','VET']],
+    [99, ['Antonio_Giovinazzi','GIO']],
+    [88, ['Robert_Kubica','KUB']],
+    [9, ['Nikita_Mazepin','MAZ']],
+    [8, ['Romain_Grosjean','GRO']]
 ]);
+console.log(drivers.get(33))
 
 client.on('messageCreate', (message) => {
     var driverNumber = 0
