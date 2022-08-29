@@ -35,8 +35,62 @@ client.on('ready', () => {
 })
 
 
+
 var calendarPath = 'calendar/Formula_1_Official_Calendar.ics'
 
+
+//                  Function for checking driver stats
+const drivers = new Map([
+    [33, 'Max_Verstappen'],
+    [1, 'Max_Verstappen'],
+    [11, 'Sergio_Pérez'],
+    [16, 'Charles_Leclerc'],
+    [55, 'Carlos_Sainz_Jr.'],
+    [63, 'George_Russell_(racing_driver)'],
+    [44, 'Lewis_Hamilton'],
+    [23, 'Alex_Albon'],
+    [6, 'Nicholas_Latifi'],
+    [14, 'Fernando_Alonso'],
+    [30, 'Esteban_Ocon'],
+    [77, 'Valtteri_Bottas'],
+    [24, 'Zhou_Guanyu'],
+    [10, 'Pierre_Gasly'],
+    [22, 'Yuki_Tsunoda'],
+    [20, 'Kevin_Magnussen'],
+    [47, 'Mick_Schumacher'],
+    [4, 'Lando_Norris'],
+    [3, 'Daniel_Ricciardo'],
+    [18, 'Lance_Stroll'],
+    [5, 'Sebastian_Vettel']
+]);
+
+client.on('messageCreate', (message) => {
+    var driverNumber = 0
+    if (message.content.includes(botChar+'driver ')) {
+        driverNumber = (Number)(message.content.substring(8))
+        if (Number.isFinite(driverNumber)){
+            if (drivers.get(driverNumber) == undefined){
+                message.reply({
+                    content: 'Please enter a valid driver number'
+                })
+            }
+            else {
+                message.reply({
+                    content: 'https://en.wikipedia.org/wiki/'+drivers.get(driverNumber)
+                })
+            }
+        }
+        else {
+            message.reply({
+                content: 'Please enter a valid driver number'
+            })
+        }
+    }
+})
+
+
+//                  Function for checking Next F1 Event
+var calendarPath = 'calendar/Formula_1_Official_Calendar.ics'
 var calendarAsString: string
 var calSubs: any[] = []
 var eventTimes: any[] = []
@@ -45,33 +99,8 @@ var today = new Date();
 var nextBool = false;
 var nextIndex = -1;
 //console.log(today)
-
-
-
-
-
 // new solution using Date() objects instead of comparing strings
 var eventDateArr: Date[] = []
-
-
-// API Testing
-// function getSchedule() {
-//     fetch("https://jsonplaceholder.typicode.com/todos")
-//     .then(
-//       (response) => response.json()
-//     )
-//     .then(
-//       (toDoListArray) => console.log(toDoListArray)
-//     );
-// }
-
-// fetch("https://jsonplaceholder.typicode.com/todos")
-// .then(
-//   (response) => response.json()
-// )
-// .then(
-//   (toDoListArray) => console.log(toDoListArray)
-// );
 
 client.on('messageCreate', (message) => {
     if (message.content === botChar + 'n' || message.content === botChar + 'next') {
@@ -80,11 +109,11 @@ client.on('messageCreate', (message) => {
         calSubs = calendarAsString.split('\n')
         for (let i = 0; i < calSubs.length; i++) {
             if (calSubs[i].includes('DTSTART;')) {
-                var eventYear = calSubs[i].substring(27,31)
-                var eventMonth = calSubs[i].substring(31,33) - 1
-                var eventDay = calSubs[i].substring(33,35)
-                var eventHour = calSubs[i].substring(36,38) //- 5
-                var eventMinute = calSubs[i].substring(38,40)
+                var eventYear = calSubs[i].substring(27, 31)
+                var eventMonth = calSubs[i].substring(31, 33) - 1
+                var eventDay = calSubs[i].substring(33, 35)
+                var eventHour = calSubs[i].substring(36, 38) //- 5
+                var eventMinute = calSubs[i].substring(38, 40)
                 //used to test date objects
                 /*
                 console.log("eventYear is " + eventYear)
@@ -93,7 +122,7 @@ client.on('messageCreate', (message) => {
                 console.log("eventHour is " + eventHour)
                 console.log("eventMinute is " + eventMinute)
                 */
-                eventDateArr.push(new Date(Date.UTC(eventYear,eventMonth,eventDay,eventHour-1,eventMinute)))
+                eventDateArr.push(new Date(Date.UTC(eventYear, eventMonth, eventDay, eventHour - 1, eventMinute)))
                 //console.log(eventDateArr)
                 eventTimes.push(calSubs[i].substring(27))
                 eventTimes.push(calSubs[i + 2].substring(8))
@@ -124,15 +153,15 @@ client.on('messageCreate', (message) => {
             }
         }
         */
-        while (!nextBool){
+        while (!nextBool) {
             nextIndex++
-            if (eventDateArr[nextIndex]>today){
+            if (eventDateArr[nextIndex] > today) {
                 nextBool = true
             }
         }
         //console.log(eventDateArr[nextIndex] + ' is time of next event')
         //console.log(eventTimes[nextIndex*2+1] + ' is name of event')
-        var nextEventName = eventTimes[nextIndex*2+1].substring(0, eventTimes[nextIndex*2 + 1].length - 1);
+        var nextEventName = eventTimes[nextIndex * 2 + 1].substring(0, eventTimes[nextIndex * 2 + 1].length - 1);
         var nextEventTime = eventDateArr[nextIndex].toLocaleString()
         /*
         console.log('Next Event name = '+nextEventName)
@@ -160,7 +189,7 @@ client.on('messageCreate', (message) => {
         }
         */
         message.reply({
-            content: 'Next event is ' + nextEventName + ' on ' + nextEventTime ,
+            content: 'Next event is ' + nextEventName + ' on ' + nextEventTime,
         })
     }
 
@@ -168,14 +197,15 @@ client.on('messageCreate', (message) => {
 })
 
 
+//              Function for changing character for bot commands
 client.on('messageCreate', (message) => {
     if (message.author.bot == false) {
         if (message.content.includes(botChar + 'change', 0)) {
             console.log(message.content[8])
             botChar = message.content[8]
-            settingsArr[0] = 'char='+botChar
-            for (let i = 0; i < settingsArr.length; i++){
-                settingsString += settingsArr[i]+'\n'
+            settingsArr[0] = 'char=' + botChar
+            for (let i = 0; i < settingsArr.length; i++) {
+                settingsString += settingsArr[i] + '\n'
             }
             fs.writeFileSync('settings.txt', settingsString, (err: any) => {
                 if (err) throw err;
@@ -188,6 +218,7 @@ client.on('messageCreate', (message) => {
     }
 })
 
+//              Help function
 client.on('messageCreate', (message) => {
     var helpString = ''
     helpString += botChar + 'change [new bot character]", to change bot character, currently "' + botChar + '"\n'
