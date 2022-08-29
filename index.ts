@@ -12,12 +12,18 @@ const client = new DiscordJS.Client(
         ]
     }
 )
-var settingsArr = []
+
+
+//load user settings from settings.txt
+var settingsArr: string[] = []
 var settingsString = fs.readFileSync('settings.txt').toString()
 //console.log(settingsString)
 settingsArr = settingsString.split('\n')
+settingsString = ''
 var botChar = '' + settingsArr[0].substring(5, 6)
-console.log(botChar)
+
+
+console.log(botChar + ' is current bot character')
 
 client.on('ready', () => {
     console.log('Bot ready')
@@ -28,54 +34,17 @@ var calendarPath = 'calendar/Formula_1_Official_Calendar.ics'
 var calendarAsString: string
 var calSubs: any[] = []
 var eventTimes: any[] = []
-var currentDate = new Date();
-console.log(currentDate)
-var dateTime = ""
-var dateArr: number[] = []
-var currentYear = currentDate.getFullYear()
-var currentMonth = currentDate.getMonth()
-var currentDay = currentDate.getDate()
+var today = new Date();
+var nextBool = false;
+var nextIndex = -1;
+//console.log(today)
 
 
-dateArr.push(currentYear)
-console.log(dateArr[0]+' = year')
-dateArr.push(currentMonth)
-console.log(dateArr[1]+' = month')
-dateArr.push(currentDay)
-console.log(dateArr[2]+' = day')
+
 
 
 // new solution using Date() objects instead of comparing strings
 var eventDateArr: Date[] = []
-
-
-//function that sets a string with current date
-function setDate() {
-    dateTime = ''
-    dateTime += dateArr[0]
-    if (dateArr[1] < 10) {
-        dateTime += "0" + (dateArr[1] + 1)
-    }
-    else {
-        dateTime += (dateArr[1] + 1)
-    }
-    if (dateArr[2] < 10) {
-        dateTime += "0" + (dateArr[2])
-    }
-    else {
-        dateTime += (dateArr[2])
-    }
-    ///
-    ///
-    ///
-    ///                 FOR TESTING PURPOSES
-    ///                 REMOVE LATER
-    ///
-    ///
-    ///
-    ///                 dateTime = '20220220'
-                console.log(dateTime +' = dateTime string')
-}
 
 
 client.on('messageCreate', (message) => {
@@ -88,10 +57,18 @@ client.on('messageCreate', (message) => {
                 var eventYear = calSubs[i].substring(27,31)
                 var eventMonth = calSubs[i].substring(31,33) - 1
                 var eventDay = calSubs[i].substring(33,35)
-                //time is broken
-                var eventHour = calSubs[i].substring(36,38)
+                var eventHour = calSubs[i].substring(36,38) //- 5
                 var eventMinute = calSubs[i].substring(38,40)
-                eventDateArr.push(new Date(eventYear,eventMonth,eventDay,eventHour,eventMinute))
+                //used to test date objects
+                /*
+                console.log("eventYear is " + eventYear)
+                console.log("eventMonth is " + eventMonth + " + 1 bc months are zero based")
+                console.log("eventDay is " + eventDay)
+                console.log("eventHour is " + eventHour)
+                console.log("eventMinute is " + eventMinute)
+                */
+                eventDateArr.push(new Date(Date.UTC(eventYear,eventMonth,eventDay,eventHour-1,eventMinute)))
+                //console.log(eventDateArr)
                 eventTimes.push(calSubs[i].substring(27))
                 eventTimes.push(calSubs[i + 2].substring(8))
             }
@@ -104,9 +81,42 @@ client.on('messageCreate', (message) => {
         }
         */
         //successfully got event names and start eventTimes into "eventTimes" array, start eventTimes start with "DTSTART;" and names with "SUMMARY:"
-        setDate()
-        //console.log(dateTime)
+        //setDate()
 
+        //this loop prints elements in eventDateArr and for testing
+        //eventDateArr.push(today)
+        /*
+        for (let i = 0; i <eventDateArr.length;i++){
+            //console.log("event time = "+eventDateArr[i])
+            if (eventDateArr[i]<today){
+                console.log("event date lt today")
+                console.log("event time = "+eventDateArr[i])
+            }
+            else {
+                console.log("event date gt today")
+                console.log("event time = "+eventDateArr[i])
+            }
+        }
+        */
+        while (!nextBool){
+            nextIndex++
+            if (eventDateArr[nextIndex]>today){
+                nextBool = true
+            }
+        }
+        //console.log(eventDateArr[nextIndex] + ' is time of next event')
+        //console.log(eventTimes[nextIndex*2+1] + ' is name of event')
+        var nextEventName = eventTimes[nextIndex*2+1].substring(0, eventTimes[nextIndex*2 + 1].length - 1);
+        var nextEventTime = eventDateArr[nextIndex].toLocaleString()
+        /*
+        console.log('Next Event name = '+nextEventName)
+        console.log('Next Event Time = '+nextEventTime)
+        console.log('Original time (UTC) = '+eventTimes[nextIndex*2])
+        console.log('Converted time (EST) = '+nextEventTime)
+        */
+        //var nextEvent = eventTimes[nextIndex*2].toLocaleString('en-US', { timeZone: 'America/New_York' });
+        //console.log(nextEvent)
+        /*
         for (let i = 0; i < eventTimes.length; i++) {
             if (eventTimes[i].includes(dateTime)) {
                 var nextEventName = eventTimes[i + 1].substring(0, eventTimes[i + 1].length - 1);
@@ -122,8 +132,9 @@ client.on('messageCreate', (message) => {
             }
 
         }
+        */
         message.reply({
-            content: 'Next event is ' + nextEventName + ' at ' + nextEventTime + ' British time.',
+            content: 'Next event is ' + nextEventName + ' on ' + nextEventTime ,
         })
     }
 
@@ -136,6 +147,14 @@ client.on('messageCreate', (message) => {
         if (message.content.includes(botChar + 'change', 0)) {
             console.log(message.content[8])
             botChar = message.content[8]
+            settingsArr[0] = 'char='+botChar
+            for (let i = 0; i < settingsArr.length; i++){
+                settingsString += settingsArr[i]+'\n'
+            }
+            fs.writeFileSync('settings.txt', settingsString, (err: any) => {
+                if (err) throw err;
+            })
+            settingsString = ''
             message.reply({
                 content: 'Bot character changed to ' + botChar,
             })
