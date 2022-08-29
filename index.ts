@@ -37,48 +37,60 @@ var calendarPath = 'calendar/Formula_1_Official_Calendar.ics'
 
 //                  Function for checking driver stats
 const drivers = new Map([
-    [33, ['Max_Verstappen','VER']],
-    [1, ['Max_Verstappen','VER']],
-    [11, ['Sergio_Pérez','PER']],
-    [16, ['Charles_Leclerc','LEC']],
-    [55, ['Carlos_Sainz_Jr.','SAI']],
-    [63, ['George_Russell_(racing_driver)','RUS']],
-    [44, ['Lewis_Hamilton','HAM']],
-    [23, ['Alex_Albon','ALB']],
-    [6, ['Nicholas_Latifi','LAT']],
-    [14, ['Fernando_Alonso','ALO']],
-    [30, ['Esteban_Ocon','OCO']],
-    [77, ['Valtteri_Bottas','BOT']],
-    [24, ['Zhou_Guanyu','ZHO']],
-    [10, ['Pierre_Gasly','GAS']],
-    [22, ['Yuki_Tsunoda','TSU']],
-    [20, ['Kevin_Magnussen','MAG']],
-    [47, ['Mick_Schumacher','SCH']],
-    [4, ['Lando_Norris','NOR']],
-    [3, ['Daniel_Ricciardo','RIC']],
-    [18, ['Lance_Stroll','STR']],
-    [5, ['Sebastian_Vettel','VET']],
-    [99, ['Antonio_Giovinazzi','GIO']],
-    [88, ['Robert_Kubica','KUB']],
-    [9, ['Nikita_Mazepin','MAZ']],
-    [8, ['Romain_Grosjean','GRO']]
+    [33, ['Max_Verstappen', 'VER']],
+    [1, ['Max_Verstappen', 'VER']],
+    [11, ['Sergio_Pérez', 'PER']],
+    [16, ['Charles_Leclerc', 'LEC']],
+    [55, ['Carlos_Sainz_Jr.', 'SAI']],
+    [63, ['George_Russell_(racing_driver)', 'RUS']],
+    [44, ['Lewis_Hamilton', 'HAM']],
+    [23, ['Alex_Albon', 'ALB']],
+    [6, ['Nicholas_Latifi', 'LAT']],
+    [14, ['Fernando_Alonso', 'ALO']],
+    [30, ['Esteban_Ocon', 'OCO']],
+    [77, ['Valtteri_Bottas', 'BOT']],
+    [24, ['Zhou_Guanyu', 'ZHO']],
+    [10, ['Pierre_Gasly', 'GAS']],
+    [22, ['Yuki_Tsunoda', 'TSU']],
+    [20, ['Kevin_Magnussen', 'MAG']],
+    [47, ['Mick_Schumacher', 'SCH']],
+    [4, ['Lando_Norris', 'NOR']],
+    [3, ['Daniel_Ricciardo', 'RIC']],
+    [18, ['Lance_Stroll', 'STR']],
+    [5, ['Sebastian_Vettel', 'VET']],
+    [99, ['Antonio_Giovinazzi', 'GIO']],
+    [88, ['Robert_Kubica', 'KUB']],
+    [9, ['Nikita_Mazepin', 'MAZ']],
+    [8, ['Romain_Grosjean', 'GRO']]
 ]);
-console.log(drivers.get(33))
+
+
 
 client.on('messageCreate', (message) => {
     var driverNumber = 0
-    if (message.content.includes(botChar+'driver ')) {
+    var statString = ''
+    if (message.content.includes(botChar + 'driver ')) {
         driverNumber = (Number)(message.content.substring(8))
-        if (Number.isFinite(driverNumber)){
-            if (drivers.get(driverNumber) == undefined){
+        if (Number.isFinite(driverNumber)) {
+            if (drivers.get(driverNumber) == undefined) {
                 message.reply({
                     content: 'Please enter a valid driver number'
                 })
             }
             else {
-                //replace this with driver data instead of a link
+                let dCode: string | undefined
+                dCode = drivers.get(driverNumber)?.pop()
+                var statURL = 'https://en.wikipedia.org/w/api.php?action=parse&text={{F1stat|'
+                statURL += dCode + '|wins}}&contentmodel=wikitext&format=json'
+
+
+                // figure out fetch
+                fetch(statURL)
+                .then((response) => response.json())
+                .then((data) => console.log(data));
+                console.log(statString)
                 message.reply({
-                    content: 'https://en.wikipedia.org/wiki/'+drivers.get(driverNumber)
+                    content: dCode + ' has won ' + statString + ' times.'
                 })
             }
         }
@@ -205,7 +217,7 @@ client.on('messageCreate', (message) => {
     if (message.author.bot == false) {
         if (message.content.includes(botChar + 'change', 0)) {
             console.log(message.content[8])
-            botChar = message.content[message.content.indexOf('change')+7]
+            botChar = message.content[message.content.indexOf('change') + 7]
             settingsArr[0] = 'char=' + botChar
             for (let i = 0; i < settingsArr.length; i++) {
                 settingsString += settingsArr[i] + '\n'
