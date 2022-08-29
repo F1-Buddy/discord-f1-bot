@@ -196,6 +196,17 @@ client.on('messageCreate', (message) => {
 
 })
 
+client.on('messageCreate', (message) => {
+    if (message.content === botChar + 'q' || message.content === botChar + 'qualification') {
+
+
+        message.reply({
+            content: 'Qualification times.'
+        })
+    }
+
+})
+
 
 //              Function for changing character for bot commands
 client.on('messageCreate', (message) => {
