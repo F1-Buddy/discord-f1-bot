@@ -1,6 +1,10 @@
 import DiscordJS, { ClientVoiceManager, IntentsBitField, time } from 'discord.js'
 import dotenv from 'dotenv'
 
+import { RequestInfo, RequestInit } from "node-fetch";
+
+const fetch = (url: RequestInfo, init?: RequestInit) =>  import("node-fetch").then(({ default: fetch }) => fetch(url, init));
+
 var fs = require('fs');
 dotenv.config()
 
@@ -49,6 +53,25 @@ var nextIndex = -1;
 // new solution using Date() objects instead of comparing strings
 var eventDateArr: Date[] = []
 
+
+// API Testing
+// function getSchedule() {
+//     fetch("https://jsonplaceholder.typicode.com/todos")
+//     .then(
+//       (response) => response.json()
+//     )
+//     .then(
+//       (toDoListArray) => console.log(toDoListArray)
+//     );
+// }
+
+// fetch("https://jsonplaceholder.typicode.com/todos")
+// .then(
+//   (response) => response.json()
+// )
+// .then(
+//   (toDoListArray) => console.log(toDoListArray)
+// );
 
 client.on('messageCreate', (message) => {
     if (message.content === botChar + 'n' || message.content === botChar + 'next') {
