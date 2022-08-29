@@ -71,6 +71,7 @@ client.on('messageCreate', (message) => {
                 })
             }
             else {
+                //replace this with driver data instead of a link
                 message.reply({
                     content: 'https://en.wikipedia.org/wiki/'+drivers.get(driverNumber)
                 })
