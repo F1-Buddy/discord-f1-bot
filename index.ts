@@ -36,6 +36,8 @@ var calendarPath = 'calendar/Formula_1_Official_Calendar.ics'
 
 
 //                  Function for checking driver stats
+
+var statArr : string[] = ['starts','wins','podiums','careerpoints','poles','fastestlaps']
 const drivers = new Map([
     [33, ['Max_Verstappen', 'VER']],
     [1, ['Max_Verstappen', 'VER']],
@@ -82,16 +84,22 @@ client.on('messageCreate', (message) => {
                 dCode = drivers.get(driverNumber)?.pop()
                 var statURL = 'https://en.wikipedia.org/w/api.php?action=parse&text={{F1stat|'
                 statURL += dCode + '|wins}}&contentmodel=wikitext&format=json'
-
+                var outString = ''
 
                 // figure out fetch
                 fetch(statURL)
-                .then((response) => response.json())
-                .then((data) => console.log(data));
-                console.log(statString)
-                message.reply({
-                    content: dCode + ' has won ' + statString + ' times.'
-                })
+                .then(response => response.json())
+                .then(data => {
+                    var statString = JSON.stringify(data.parse.text)
+                    //console.log('statString = '+statString)
+                    //console.log('index of <p> = '+statString.indexOf('<p>'))
+                    //console.log('index of /n = '+statString.indexOf('\n'))
+                    outString = statString.substring((statString.indexOf('<p>')+3),(statString.indexOf('n')-1))
+                    //console.log('outString = \t'+outString)
+                    message.reply({
+                        content: dCode + ' has won ' + outString + ' times.'
+                    })
+                });
             }
         }
         else {
