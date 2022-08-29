@@ -193,11 +193,13 @@ client.on('messageCreate', (message) => {
 
 
 //              Function for changing character for bot commands
+
+// add checks for command character, thanks jubayer
 client.on('messageCreate', (message) => {
     if (message.author.bot == false) {
         if (message.content.includes(botChar + 'change', 0)) {
             console.log(message.content[8])
-            botChar = message.content[8]
+            botChar = message.content[message.content.indexOf('change')+7]
             settingsArr[0] = 'char=' + botChar
             for (let i = 0; i < settingsArr.length; i++) {
                 settingsString += settingsArr[i] + '\n'
