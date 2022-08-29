@@ -37,7 +37,7 @@ var calendarPath = 'calendar/Formula_1_Official_Calendar.ics'
 
 //                  Function for checking driver stats
 
-var statArr : string[] = ['starts','wins','podiums','careerpoints','poles','fastestlaps']
+var statArr: string[] = ['starts', 'wins', 'podiums', 'careerpoints', 'poles', 'fastestlaps']
 const drivers = new Map([
     [33, ['Max_Verstappen', 'VER']],
     [1, ['Max_Verstappen', 'VER']],
@@ -70,41 +70,48 @@ const drivers = new Map([
 
 client.on('messageCreate', (message) => {
     var driverNumber = 0
-    var statString = ''
-    if (message.content.includes(botChar + 'driver ')) {
-        driverNumber = (Number)(message.content.substring(8))
-        if (Number.isFinite(driverNumber)) {
-            if (drivers.get(driverNumber) == undefined) {
-                message.reply({
-                    content: 'Please enter a valid driver number'
-                })
+    if (message.content.includes(botChar + 'driver') && message.author.bot == false) {
+        if (message.content.length >= 8) {
+            driverNumber = (Number)(message.content.substring(8))
+            console.log('driverNumber = ' + driverNumber)
+            if (Number.isFinite(driverNumber)) {
+                if (drivers.get(driverNumber) == undefined) {
+                    message.reply({
+                        content: 'Please enter a valid driver number (2020 - 2022): $driver 33'
+                    })
+                }
+                else {
+                    let dCode: string | undefined
+                    dCode = drivers.get(driverNumber)?.pop()
+                    var statURL = 'https://en.wikipedia.org/w/api.php?action=parse&text={{F1stat|'
+                    statURL += dCode + '|wins}}&contentmodel=wikitext&format=json'
+                    var outString = ''
+
+                    // figure out fetch
+                    fetch(statURL)
+                        .then(response => response.json())
+                        .then(data => {
+                            var statString = JSON.stringify(data.parse.text)
+                            //console.log('statString = '+statString)
+                            //console.log('index of <p> = '+statString.indexOf('<p>'))
+                            //console.log('index of /n = '+statString.indexOf('\n'))
+                            outString = statString.substring((statString.indexOf('<p>') + 3), (statString.indexOf('n') - 1))
+                            //console.log('outString = \t'+outString)
+                            message.reply({
+                                content: dCode + ' has won ' + outString + ' times.'
+                            })
+                        });
+                }
             }
             else {
-                let dCode: string | undefined
-                dCode = drivers.get(driverNumber)?.pop()
-                var statURL = 'https://en.wikipedia.org/w/api.php?action=parse&text={{F1stat|'
-                statURL += dCode + '|wins}}&contentmodel=wikitext&format=json'
-                var outString = ''
-
-                // figure out fetch
-                fetch(statURL)
-                .then(response => response.json())
-                .then(data => {
-                    var statString = JSON.stringify(data.parse.text)
-                    //console.log('statString = '+statString)
-                    //console.log('index of <p> = '+statString.indexOf('<p>'))
-                    //console.log('index of /n = '+statString.indexOf('\n'))
-                    outString = statString.substring((statString.indexOf('<p>')+3),(statString.indexOf('n')-1))
-                    //console.log('outString = \t'+outString)
-                    message.reply({
-                        content: dCode + ' has won ' + outString + ' times.'
-                    })
-                });
+                message.reply({
+                    content: 'Please enter a valid driver number (2020 - 2022): $driver 33'
+                })
             }
         }
         else {
             message.reply({
-                content: 'Please enter a valid driver number'
+                content: 'Please enter a valid driver number (2020 - 2022): $driver 33'
             })
         }
     }
