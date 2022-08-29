@@ -19,7 +19,8 @@
   "homepage": "https://github.com/rakib-shahid/discord-f1-bot#readme",
   "dependencies": {
     "discord.js": "^14.3.0",
-    "dotenv": "^16.0.1"
+    "dotenv": "^16.0.1",
+    "node-fetch": "^3.2.10"
   },
   "devDependencies": {
     "ts-node": "^10.9.1",
