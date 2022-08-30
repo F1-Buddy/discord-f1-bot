@@ -32,77 +32,80 @@ client.on('ready', () => {
 
 
 
-var calendarPath = 'calendar/Formula_1_Official_Calendar.ics'
+
 
 
 
 var statArr: string[] = ['starts', 'wins', 'podiums', 'careerpoints', 'poles', 'fastestlaps']
 var statStringsArr: string[] = ['Started ', ' times', 'Won ', ' times', 'Been on the podium ', ' times', 'Scored ', ' points', 'Claimed ', ' poles', 'Claimed ', ' fastest laps']
 var drivers = new Map([
-    [33, ['Max_Verstappen', 'VER']],
-    [1, ['Max_Verstappen', 'VER']],
-    [11, ['Sergio_Pérez', 'PER']],
-    [16, ['Charles_Leclerc', 'LEC']],
-    [55, ['Carlos_Sainz_Jr.', 'SAI']],
-    [63, ['George_Russell_(racing_driver)', 'RUS']],
-    [44, ['Lewis_Hamilton', 'HAM']],
-    [23, ['Alex_Albon', 'ALB']],
-    [6, ['Nicholas_Latifi', 'LAT']],
-    [14, ['Fernando_Alonso', 'ALO']],
-    [30, ['Esteban_Ocon', 'OCO']],
-    [77, ['Valtteri_Bottas', 'BOT']],
-    [24, ['Zhou_Guanyu', 'ZHO']],
-    [10, ['Pierre_Gasly', 'GAS']],
-    [22, ['Yuki_Tsunoda', 'TSU']],
-    [20, ['Kevin_Magnussen', 'MAG']],
-    [47, ['Mick_Schumacher', 'SCH']],
-    [4, ['Lando_Norris', 'NOR']],
-    [3, ['Daniel_Ricciardo', 'RIC']],
-    [18, ['Lance_Stroll', 'STR']],
-    [5, ['Sebastian_Vettel', 'VET']],
-    [99, ['Antonio_Giovinazzi', 'GIO']],
-    [88, ['Robert_Kubica', 'KUB']],
-    [9, ['Nikita_Mazepin', 'MAZ']],
-    [8, ['Romain_Grosjean', 'GRO']]
+    [33, ['Max Verstappen', 'VER']],
+    [1, ['Max Verstappen', 'VER']],
+    [11, ['Sergio Pérez', 'PER']],
+    [16, ['Charles Leclerc', 'LEC']],
+    [55, ['Carlos Sainz_Jr.', 'SAI']],
+    [63, ['George Russell', 'RUS']],
+    [44, ['Lewis Hamilton', 'HAM']],
+    [23, ['Alex Albon', 'ALB']],
+    [6, ['Nicholas Latifi', 'LAT']],
+    [14, ['Fernando Alonso', 'ALO']],
+    [30, ['Esteban Ocon', 'OCO']],
+    [77, ['Valtteri Bottas', 'BOT']],
+    [24, ['Zhou Guanyu', 'ZHO']],
+    [10, ['Pierre Gasly', 'GAS']],
+    [22, ['Yuki Tsunoda', 'TSU']],
+    [20, ['Kevin Magnussen', 'MAG']],
+    [47, ['Mick Schumacher', 'SCH']],
+    [4, ['Lando Norris', 'NOR']],
+    [3, ['Daniel Ricciardo', 'RIC']],
+    [18, ['Lance Stroll', 'STR']],
+    [5, ['Sebastian Vettel', 'VET']],
+    [99, ['Antonio Giovinazzi', 'GIO']],
+    [88, ['Robert Kubica', 'KUB']],
+    [9, ['Nikita Mazepin', 'MAZ']],
+    [26, ['Daniil Kvyat', 'KVY']],
+    [8, ['Romain Grosjean', 'GRO']]
 ]);
 
 //setDrivers function resets the 'drivers' map, created bc idk how to get value without popping. :(
 function setDrivers() {
     drivers.clear()
     drivers = new Map([
-        [33, ['Max_Verstappen', 'VER']],
-        [1, ['Max_Verstappen', 'VER']],
-        [11, ['Sergio_Pérez', 'PER']],
-        [16, ['Charles_Leclerc', 'LEC']],
-        [55, ['Carlos_Sainz_Jr.', 'SAI']],
-        [63, ['George_Russell_(racing_driver)', 'RUS']],
-        [44, ['Lewis_Hamilton', 'HAM']],
-        [23, ['Alex_Albon', 'ALB']],
-        [6, ['Nicholas_Latifi', 'LAT']],
-        [14, ['Fernando_Alonso', 'ALO']],
-        [30, ['Esteban_Ocon', 'OCO']],
-        [77, ['Valtteri_Bottas', 'BOT']],
-        [24, ['Zhou_Guanyu', 'ZHO']],
-        [10, ['Pierre_Gasly', 'GAS']],
-        [22, ['Yuki_Tsunoda', 'TSU']],
-        [20, ['Kevin_Magnussen', 'MAG']],
-        [47, ['Mick_Schumacher', 'SCH']],
-        [4, ['Lando_Norris', 'NOR']],
-        [3, ['Daniel_Ricciardo', 'RIC']],
-        [18, ['Lance_Stroll', 'STR']],
-        [5, ['Sebastian_Vettel', 'VET']],
-        [99, ['Antonio_Giovinazzi', 'GIO']],
-        [88, ['Robert_Kubica', 'KUB']],
-        [9, ['Nikita_Mazepin', 'MAZ']],
-        [8, ['Romain_Grosjean', 'GRO']]
+        [33, ['Max Verstappen', 'VER']],
+    [1, ['Max Verstappen', 'VER']],
+    [11, ['Sergio Pérez', 'PER']],
+    [16, ['Charles Leclerc', 'LEC']],
+    [55, ['Carlos Sainz_Jr.', 'SAI']],
+    [63, ['George Russell', 'RUS']],
+    [44, ['Lewis Hamilton', 'HAM']],
+    [23, ['Alex Albon', 'ALB']],
+    [6, ['Nicholas Latifi', 'LAT']],
+    [14, ['Fernando Alonso', 'ALO']],
+    [30, ['Esteban Ocon', 'OCO']],
+    [77, ['Valtteri Bottas', 'BOT']],
+    [24, ['Zhou Guanyu', 'ZHO']],
+    [10, ['Pierre Gasly', 'GAS']],
+    [22, ['Yuki Tsunoda', 'TSU']],
+    [20, ['Kevin Magnussen', 'MAG']],
+    [47, ['Mick Schumacher', 'SCH']],
+    [4, ['Lando Norris', 'NOR']],
+    [3, ['Daniel Ricciardo', 'RIC']],
+    [18, ['Lance Stroll', 'STR']],
+    [5, ['Sebastian Vettel', 'VET']],
+    [99, ['Antonio Giovinazzi', 'GIO']],
+    [88, ['Robert Kubica', 'KUB']],
+    [9, ['Nikita Mazepin', 'MAZ']],
+    [26, ['Daniil Kvyat', 'KVY']],
+    [8, ['Romain Grosjean', 'GRO']]
     ]);
 }
 
 
 //                  Command for checking driver stats
 
-client.on('messageCreate', (message) => {
+client.on('messageCreate', async (message) => {
     var driverNumber = 0
+    var driverName : string | undefined = ''
     if (message.content.includes(botChar + 'driver') && message.author.bot == false) {
         if (message.content.length >= 8) {
             driverNumber = (Number)(message.content.substring(8))
@@ -116,45 +119,38 @@ client.on('messageCreate', (message) => {
                 else {
                     let dCode: string | undefined
                     dCode = drivers.get(driverNumber)?.pop()
+                    driverName = drivers.get(driverNumber)?.pop()
                     setDrivers()
                     //console.log('POPPED!' + drivers)
                     var statURL = ''
-                    var finalOutString = ''
+                    var finalOutString = driverName + ' has\n```'
                     var outString = ''
                     var fetchArr: string[] = []
                     for (let i = 0; i < statArr.length; i++) {
                         statURL = ''
                         statURL += 'https://en.wikipedia.org/w/api.php?action=parse&text={{F1stat|'
                         statURL += dCode + '|' + statArr[i] + '}}&contentmodel=wikitext&format=json'
-                        
+
                         fetchArr.push(statURL)
-                        console.log('\nstatURL = ' +fetchArr[i] )
+                        const fetchedPage = await fetch(fetchArr[i])
+                        const pageData = await fetchedPage.json()
+                        var statString = JSON.stringify(pageData.parse.text)
+                        outString = statString.substring((statString.indexOf('<p>') + 3), (statString.indexOf('n') - 1))
+                        //console.log('outString = \n' + outString)
+                        finalOutString += statStringsArr[i*2] + outString + statStringsArr[i*2 + 1] + '\n'
+                        //console.log('finalOutString = \n' + finalOutString)
+                        
+                        //console.log('\nstatURL = ' + fetchArr[i])
                     }
-                    
+                    finalOutString += '```'
+                     await message.reply({
+                        content: finalOutString
+                    })
 
 
                     // figure out fetch
-                    fetch(statURL)
-                        .then(response => response.json())
-                        .then(data => {
-                            var statString = JSON.stringify(data.parse.text)
-                            //console.log('statString = '+statString)
-                            //console.log('index of <p> = '+statString.indexOf('<p>'))
-                            //console.log('index of /n = '+statString.indexOf('\n'))
-                            outString = statString.substring((statString.indexOf('<p>') + 3), (statString.indexOf('n') - 1))
-                            console.log('outString = \n' + outString)
-                            finalOutString += statStringsArr[0] + outString + statStringsArr[0 + 1] + '\n'
-                            console.log('finalOutString = \n' + finalOutString)
-                                loopStats()
-                            //console.log(drivers)
-                        });
-                    for (let i = 0, c = 0; i < statArr.length; i++, c += 2) {
-
-                    }
                     function loopStats() {
-                        message.reply({
-                            content: finalOutString
-                        })
+                        
                     }
 
 
