@@ -72,31 +72,31 @@ function setDrivers() {
     drivers.clear()
     drivers = new Map([
         [33, ['Max Verstappen', 'VER']],
-    [1, ['Max Verstappen', 'VER']],
-    [11, ['Sergio Pérez', 'PER']],
-    [16, ['Charles Leclerc', 'LEC']],
-    [55, ['Carlos Sainz_Jr.', 'SAI']],
-    [63, ['George Russell', 'RUS']],
-    [44, ['Lewis Hamilton', 'HAM']],
-    [23, ['Alex Albon', 'ALB']],
-    [6, ['Nicholas Latifi', 'LAT']],
-    [14, ['Fernando Alonso', 'ALO']],
-    [30, ['Esteban Ocon', 'OCO']],
-    [77, ['Valtteri Bottas', 'BOT']],
-    [24, ['Zhou Guanyu', 'ZHO']],
-    [10, ['Pierre Gasly', 'GAS']],
-    [22, ['Yuki Tsunoda', 'TSU']],
-    [20, ['Kevin Magnussen', 'MAG']],
-    [47, ['Mick Schumacher', 'SCH']],
-    [4, ['Lando Norris', 'NOR']],
-    [3, ['Daniel Ricciardo', 'RIC']],
-    [18, ['Lance Stroll', 'STR']],
-    [5, ['Sebastian Vettel', 'VET']],
-    [99, ['Antonio Giovinazzi', 'GIO']],
-    [88, ['Robert Kubica', 'KUB']],
-    [9, ['Nikita Mazepin', 'MAZ']],
-    [26, ['Daniil Kvyat', 'KVY']],
-    [8, ['Romain Grosjean', 'GRO']]
+        [1, ['Max Verstappen', 'VER']],
+        [11, ['Sergio Pérez', 'PER']],
+        [16, ['Charles Leclerc', 'LEC']],
+        [55, ['Carlos Sainz_Jr.', 'SAI']],
+        [63, ['George Russell', 'RUS']],
+        [44, ['Lewis Hamilton', 'HAM']],
+        [23, ['Alex Albon', 'ALB']],
+        [6, ['Nicholas Latifi', 'LAT']],
+        [14, ['Fernando Alonso', 'ALO']],
+        [30, ['Esteban Ocon', 'OCO']],
+        [77, ['Valtteri Bottas', 'BOT']],
+        [24, ['Zhou Guanyu', 'ZHO']],
+        [10, ['Pierre Gasly', 'GAS']],
+        [22, ['Yuki Tsunoda', 'TSU']],
+        [20, ['Kevin Magnussen', 'MAG']],
+        [47, ['Mick Schumacher', 'SCH']],
+        [4, ['Lando Norris', 'NOR']],
+        [3, ['Daniel Ricciardo', 'RIC']],
+        [18, ['Lance Stroll', 'STR']],
+        [5, ['Sebastian Vettel', 'VET']],
+        [99, ['Antonio Giovinazzi', 'GIO']],
+        [88, ['Robert Kubica', 'KUB']],
+        [9, ['Nikita Mazepin', 'MAZ']],
+        [26, ['Daniil Kvyat', 'KVY']],
+        [8, ['Romain Grosjean', 'GRO']]
     ]);
 }
 
@@ -105,16 +105,19 @@ function setDrivers() {
 
 client.on('messageCreate', async (message) => {
     var driverNumber = 0
-    var driverName : string | undefined = ''
-    if (message.content.includes(botChar + 'driver') && message.author.bot == false) {
+    var driverName: string | undefined = ''
+    function invalidDNumInput() {
+        message.reply({
+            content: 'Please enter a valid driver number (2020 - 2022): $driver 33'
+        })
+    }
+    if (message.content.toLowerCase().includes(botChar + 'driver') && message.author.bot == false) {
         if (message.content.length >= 8) {
             driverNumber = (Number)(message.content.substring(8))
             //console.log('driverNumber = ' + driverNumber)
             if (Number.isFinite(driverNumber)) {
                 if (drivers.get(driverNumber) == undefined) {
-                    message.reply({
-                        content: 'Please enter a valid driver number (2020 - 2022): $driver 33'
-                    })
+                    invalidDNumInput()
                 }
                 else {
                     let dCode: string | undefined
@@ -137,35 +140,23 @@ client.on('messageCreate', async (message) => {
                         var statString = JSON.stringify(pageData.parse.text)
                         outString = statString.substring((statString.indexOf('<p>') + 3), (statString.indexOf('n') - 1))
                         //console.log('outString = \n' + outString)
-                        finalOutString += statStringsArr[i*2] + outString + statStringsArr[i*2 + 1] + '\n'
+                        finalOutString += statStringsArr[i * 2] + outString + statStringsArr[i * 2 + 1] + '\n'
                         //console.log('finalOutString = \n' + finalOutString)
-                        
+
                         //console.log('\nstatURL = ' + fetchArr[i])
                     }
                     finalOutString += '```'
-                     await message.reply({
+                    await message.reply({
                         content: finalOutString
                     })
-
-
-                    // figure out fetch
-                    function loopStats() {
-                        
-                    }
-
-
                 }
             }
             else {
-                message.reply({
-                    content: 'Please enter a valid driver number (2020 - 2022): $driver 33'
-                })
+                invalidDNumInput()
             }
         }
         else {
-            message.reply({
-                content: 'Please enter a valid driver number (2020 - 2022): $driver 33'
-            })
+            invalidDNumInput()
         }
     }
 })
@@ -173,6 +164,7 @@ client.on('messageCreate', async (message) => {
 
 //                  Command for checking Next F1 Event
 var calendarPath = 'calendar/Formula_1_Official_Calendar.ics'
+var calendarURL = 'https://www.formula1.com/calendar/Formula_1_Official_Calendar.ics'
 var calendarAsString: string
 var calSubs: any[] = []
 var eventTimes: any[] = []
@@ -183,8 +175,13 @@ var nextIndex = -1;
 //console.log(today)
 // new solution using Date() objects instead of comparing strings
 var eventDateArr: Date[] = []
-client.on('messageCreate', (message) => {
-    if (message.content === botChar + 'n' || message.content === botChar + 'next') {
+client.on('messageCreate', async (message) => {
+    if (message.content.toLowerCase() === botChar + 'n' || message.content.toLowerCase() === botChar + 'next') {
+
+        //fix fetch, .ics file not .json
+        //const fetchedPage = await fetch(calendarURL)
+        //const pageData = await fetchedPage.json()
+        //await console.log('fetched JSON = '+pageData)
         calendarAsString = ''
         calendarAsString = fs.readFileSync(calendarPath).toString();
         calSubs = calendarAsString.split('\n')
@@ -205,6 +202,8 @@ client.on('messageCreate', (message) => {
                 */
                 eventDateArr.push(new Date(Date.UTC(eventYear, eventMonth, eventDay, eventHour - 1, eventMinute)))
                 //console.log(eventDateArr)
+
+                //change to date objects
                 eventTimes.push(calSubs[i].substring(27))
                 eventTimes.push(calSubs[i + 2].substring(8))
             }
@@ -218,22 +217,6 @@ client.on('messageCreate', (message) => {
         */
         //successfully got event names and start eventTimes into "eventTimes" array, start eventTimes start with "DTSTART;" and names with "SUMMARY:"
         //setDate()
-
-        //this loop prints elements in eventDateArr and for testing
-        //eventDateArr.push(today)
-        /*
-        for (let i = 0; i <eventDateArr.length;i++){
-            //console.log("event time = "+eventDateArr[i])
-            if (eventDateArr[i]<today){
-                console.log("event date lt today")
-                console.log("event time = "+eventDateArr[i])
-            }
-            else {
-                console.log("event date gt today")
-                console.log("event time = "+eventDateArr[i])
-            }
-        }
-        */
         while (!nextBool) {
             nextIndex++
             if (eventDateArr[nextIndex] > today) {
@@ -283,7 +266,7 @@ client.on('messageCreate', (message) => {
 // add checks for command character, thanks jubayer
 client.on('messageCreate', (message) => {
     if (message.author.bot == false) {
-        if (message.content.includes(botChar + 'change', 0)) {
+        if (message.content.toLowerCase().includes(botChar + 'change', 0)) {
             console.log(message.content[8])
             botChar = message.content[message.content.indexOf('change') + 7]
             settingsArr[0] = 'char=' + botChar
@@ -306,7 +289,7 @@ client.on('messageCreate', (message) => {
     var helpString = ''
     helpString += botChar + 'change [new bot character]", to change bot character, currently "' + botChar + '"\n'
     helpString += botChar + 'n or ' + botChar + 'next to check next race'
-    if (message.content === botChar + 'help' || message.content === botChar + 'h') {
+    if (message.content.toLowerCase() === botChar + 'help' || message.content.toLowerCase() === botChar + 'h') {
         message.reply({
             content: helpString
         })
