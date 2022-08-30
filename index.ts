@@ -1,6 +1,10 @@
 import DiscordJS, { ClientVoiceManager, IntentsBitField, time } from 'discord.js'
 import dotenv from 'dotenv'
 
+import { RequestInfo, RequestInit } from "node-fetch";
+
+const fetch = (url: RequestInfo, init?: RequestInit) =>  import("node-fetch").then(({ default: fetch }) => fetch(url, init));
+
 var fs = require('fs');
 dotenv.config()
 
@@ -174,6 +178,7 @@ var nextIndex = -1;
 //console.log(today)
 // new solution using Date() objects instead of comparing strings
 var eventDateArr: Date[] = []
+
 client.on('messageCreate', async (message) => {
     if (message.content.toLowerCase() === botChar + 'n' || message.content.toLowerCase() === botChar + 'next') {
         const fetchedPage = await fetch(calendarURL)
