@@ -163,7 +163,6 @@ client.on('messageCreate', async (message) => {
 
 
 //                  Command for checking Next F1 Event
-var calendarPath = 'calendar/Formula_1_Official_Calendar.ics'
 var calendarURL = 'https://www.formula1.com/calendar/Formula_1_Official_Calendar.ics'
 var calendarAsString: string
 var calSubs: any[] = []
