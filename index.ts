@@ -37,7 +37,7 @@ var calendarPath = 'calendar/Formula_1_Official_Calendar.ics'
 
 
 var statArr: string[] = ['starts', 'wins', 'podiums', 'careerpoints', 'poles', 'fastestlaps']
-var statArr: string[] = ['Started ',' times', 'Won ',' times', 'Been on the podium ', ' times', 'Scored ',' points', 'Claimed ' , ' poles', 'Claimed ', ' fastest laps']
+var statStringsArr: string[] = ['Started ', ' times', 'Won ', ' times', 'Been on the podium ', ' times', 'Scored ', ' points', 'Claimed ', ' poles', 'Claimed ', ' fastest laps']
 var drivers = new Map([
     [33, ['Max_Verstappen', 'VER']],
     [1, ['Max_Verstappen', 'VER']],
@@ -67,7 +67,7 @@ var drivers = new Map([
 ]);
 
 //setDrivers function resets the 'drivers' map, created bc idk how to get value without popping. :(
-function setDrivers(){
+function setDrivers() {
     drivers.clear()
     drivers = new Map([
         [33, ['Max_Verstappen', 'VER']],
@@ -116,13 +116,22 @@ client.on('messageCreate', (message) => {
                 else {
                     let dCode: string | undefined
                     dCode = drivers.get(driverNumber)?.pop()
+                    setDrivers()
                     //console.log('POPPED!' + drivers)
                     var statURL = ''
-
-                    
-                    statURL += 'https://en.wikipedia.org/w/api.php?action=parse&text={{F1stat|'
-                    statURL += dCode + '|wins}}&contentmodel=wikitext&format=json'
+                    var finalOutString = ''
                     var outString = ''
+                    var fetchArr: string[] = []
+                    for (let i = 0; i < statArr.length; i++) {
+                        statURL = ''
+                        statURL += 'https://en.wikipedia.org/w/api.php?action=parse&text={{F1stat|'
+                        statURL += dCode + '|' + statArr[i] + '}}&contentmodel=wikitext&format=json'
+                        
+                        fetchArr.push(statURL)
+                        console.log('\nstatURL = ' +fetchArr[i] )
+                    }
+                    
+
 
                     // figure out fetch
                     fetch(statURL)
@@ -133,15 +142,22 @@ client.on('messageCreate', (message) => {
                             //console.log('index of <p> = '+statString.indexOf('<p>'))
                             //console.log('index of /n = '+statString.indexOf('\n'))
                             outString = statString.substring((statString.indexOf('<p>') + 3), (statString.indexOf('n') - 1))
-                            //console.log('outString = \t'+outString)
-                            message.reply({
-                                content: dCode + ' has won ' + outString + ' times.'
-                                
-                            })
-                            setDrivers()
+                            console.log('outString = \n' + outString)
+                            finalOutString += statStringsArr[0] + outString + statStringsArr[0 + 1] + '\n'
+                            console.log('finalOutString = \n' + finalOutString)
+                                loopStats()
                             //console.log(drivers)
                         });
-                    
+                    for (let i = 0, c = 0; i < statArr.length; i++, c += 2) {
+
+                    }
+                    function loopStats() {
+                        message.reply({
+                            content: finalOutString
+                        })
+                    }
+
+
                 }
             }
             else {
@@ -258,7 +274,7 @@ client.on('messageCreate', (message) => {
         }
         */
         message.reply({
-            content: 'Next event is ' + nextEventName + ' on ' + nextEventTime,
+            content: 'Next event is ' + nextEventName + ' on ``' + nextEventTime + '``',
         })
     }
 
