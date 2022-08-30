@@ -177,13 +177,8 @@ var nextIndex = -1;
 var eventDateArr: Date[] = []
 client.on('messageCreate', async (message) => {
     if (message.content.toLowerCase() === botChar + 'n' || message.content.toLowerCase() === botChar + 'next') {
-
-        //fix fetch, .ics file not .json
-        //const fetchedPage = await fetch(calendarURL)
-        //const pageData = await fetchedPage.json()
-        //await console.log('fetched JSON = '+pageData)
-        calendarAsString = ''
-        calendarAsString = fs.readFileSync(calendarPath).toString();
+        const fetchedPage = await fetch(calendarURL)
+        calendarAsString = await fetchedPage.text()
         calSubs = calendarAsString.split('\n')
         for (let i = 0; i < calSubs.length; i++) {
             if (calSubs[i].includes('DTSTART;')) {
