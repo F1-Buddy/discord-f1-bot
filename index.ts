@@ -1,9 +1,9 @@
 import DiscordJS, { ClientVoiceManager, IntentsBitField, time } from 'discord.js'
 import dotenv from 'dotenv'
 
-import { RequestInfo, RequestInit } from "node-fetch";
+//import { RequestInfo, RequestInit } from "node-fetch";
 
-const fetch = (url: RequestInfo, init?: RequestInit) =>  import("node-fetch").then(({ default: fetch }) => fetch(url, init));
+//const fetch = (url: RequestInfo, init?: RequestInit) =>  import("node-fetch").then(({ default: fetch }) => fetch(url, init));
 
 var fs = require('fs');
 dotenv.config()
