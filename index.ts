@@ -383,7 +383,7 @@ client.on("messageCreate", async (message) => {
 client.on('messageCreate', (message) => {
     if (message.author.bot == false) {
         if (message.content.toLowerCase().includes(botChar + 'change', 0)) {
-            console.log(message.content[8])
+            console.log('prefix changed to '+message.content[8])
             botChar = message.content[message.content.indexOf('change') + 7]
             settingsArr[0] = 'char=' + botChar
             for (let i = 0; i < settingsArr.length; i++) {
