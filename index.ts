@@ -268,66 +268,113 @@ client.on('messageCreate', async (message) => {
 })
 
 
-var rounds = new Map([[1, "Bahrain Grand Prix"]]);
+var rounds = new Map([]);
+var icsAsString = ''
+var icsArr = []
+//rounds.set(1, "Bahrain Grand Prix")
+async function getRounds() {
+    const fetchedPage = await fetch(calendarURL)
+    icsAsString = await fetchedPage.text()
+    icsArr = icsAsString.split('\n')
+    for (let i = 0, c = 1; i < icsArr.length; i++) {
+        if (icsArr[i].includes(' - Qualifying')) {
+            //console.log(icsArr[i])
+            rounds.set(c, icsArr[i].substring(8, icsArr[i].length - 1))
+            c++
+        }
+    }
+}
+
 client.on("messageCreate", async (message) => {
+    getRounds()
     var roundNumber = 1;
-    var roundName: string | undefined = "";
+    var roundName: string | unknown = "";
     function invalidDNumInput() {
-      message.reply({
-        content: "Please enter a valid round number (2022): $quali 1",
-      });
+        message.reply({
+            content: "Please enter a valid round number (2022): $quali 1",
+        });
     }
     if (
-      message.content.toLowerCase().includes(botChar + "quali") &&
-      message.author.bot == false
+        message.content.toLowerCase().includes(botChar + "quali") &&
+        message.author.bot == false
     ) {
-      if (message.content.length >= 7) {
-        roundNumber = Number(message.content.substring(7));
-        if (Number.isFinite(roundNumber)) {
-          if (rounds.get(roundNumber) == undefined) {
-            invalidDNumInput();
-            console.log("this clearly isn't working");
-          } else {
-            roundName = rounds.get(roundNumber);
-  
-            var statURL = "";
-            var finalOutString = roundName + " qualification results\n";
-            var outString = "";
-            statURL = "http://ergast.com/api/f1/2022/";
-            statURL += roundNumber + "/" + "qualifying.json";
-  
-            console.log(statURL);
-  
-            const fetchedPage = await fetch(statURL);
-            const pageData = await fetchedPage.json();
-            let qualiArr = pageData.MRData.RaceTable.Races
-            var statString = JSON.stringify(pageData.MRData.RaceTable.Races);
-            console.log(qualiArr[0].json().season)
-            
+        if (message.content.length >= 7) {
+            roundNumber = Number(message.content.substring(7));
+            if (Number.isFinite(roundNumber)) {
+                if (rounds.get(roundNumber) == undefined) {
+                    invalidDNumInput();
+                    //console.log("this clearly isn't working");
+                } else {
+                    roundName = rounds.get(roundNumber);
 
-  
-            //outString = statString.substring((statString.indexOf('<p>') + 3), (statString.indexOf('n') - 1))
-            //console.log('outString = \n' + outString)
-  
-            //finalOutString += statStringsArr[i * 2] + outString + statStringsArr[i * 2 + 1] + '\n'
-  
-            //console.log('finalOutString = \n' + finalOutString)
-  
-            //console.log('\nstatURL = ' + fetchArr[i])
+                    var statURL = "";
+                    var finalOutString = roundName + " results:\n\n";
+                    var outString = "";
+                    statURL = "http://ergast.com/api/f1/2022/";
+                    statURL += roundNumber + "/" + "qualifying.json";
 
-            //finalOutString += ''
-            await message.reply({
-              content: finalOutString,
-            });
-          }
+                    //console.log(statURL);
+
+                    const fetchedPage = await fetch(statURL);
+                    const pageData = await fetchedPage.json();
+                    if (pageData.MRData.RaceTable.Races.length != 0) {
+                        var qualiArr = pageData.MRData.RaceTable.Races[0].QualifyingResults;
+                        for (let i = 0; i < qualiArr.length; i++) {
+                            var positionString = 'P' + pageData.MRData.RaceTable.Races[0].QualifyingResults[i].position
+                            var driverNameString = pageData.MRData.RaceTable.Races[0].QualifyingResults[i].Driver.givenName + ' ' +
+                                pageData.MRData.RaceTable.Races[0].QualifyingResults[i].Driver.familyName
+                            var q1Time = pageData.MRData.RaceTable.Races[0].QualifyingResults[i].Q1
+                            var q2Time = pageData.MRData.RaceTable.Races[0].QualifyingResults[i].Q2
+                            var q3Time = pageData.MRData.RaceTable.Races[0].QualifyingResults[i].Q3
+                            finalOutString += '```c\n'
+                            finalOutString += positionString + '\n\n' + driverNameString + '\n'
+                            if (q3Time != undefined) {
+                                finalOutString += 'Q3 Time = ' + q3Time + '\n'
+                            }
+                            if (q2Time != undefined) {
+                                finalOutString += 'Q2 Time = ' + q2Time + '\n'
+                            }
+                            if (q1Time != undefined) {
+                                finalOutString += 'Q1 Time = ' + q1Time + '\n'
+                            }
+                            finalOutString += '```'
+                            // console.log('\n')
+                            // console.log(pageData.MRData.RaceTable.Races[0].QualifyingResults[i].Driver.givenName + ' ' +
+                            //             pageData.MRData.RaceTable.Races[0].QualifyingResults[i].Driver.familyName
+                            // )
+                            // console.log('P'+pageData.MRData.RaceTable.Races[0].QualifyingResults[i].position)
+                        }
+                    }
+                    else {
+                        finalOutString = 'Please enter a round number that has occured'
+                    }
+
+                    //console.log(finalOutString)
+
+
+
+                    //outString = statString.substring((statString.indexOf('<p>') + 3), (statString.indexOf('n') - 1))
+                    //console.log('outString = \n' + outString)
+
+                    //finalOutString += statStringsArr[i * 2] + outString + statStringsArr[i * 2 + 1] + '\n'
+
+                    //console.log('finalOutString = \n' + finalOutString)
+
+                    //console.log('\nstatURL = ' + fetchArr[i])
+
+                    //finalOutString += ''
+                    await message.reply({
+                        content: finalOutString,
+                    });
+                }
+            } else {
+                invalidDNumInput();
+            }
         } else {
-          invalidDNumInput();
+            invalidDNumInput();
         }
-      } else {
-        invalidDNumInput();
-      }
     }
-  });
+});
 
 
 //              Command for changing character for bot commands
