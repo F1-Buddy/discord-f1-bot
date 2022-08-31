@@ -1,9 +1,9 @@
 import DiscordJS, { ClientVoiceManager, IntentsBitField, time } from 'discord.js'
 import dotenv from 'dotenv'
 
-import { RequestInfo, RequestInit } from "node-fetch";
+//import { RequestInfo, RequestInit } from "node-fetch";
 
-const fetch = (url: RequestInfo, init?: RequestInit) =>  import("node-fetch").then(({ default: fetch }) => fetch(url, init));
+//const fetch = (url: RequestInfo, init?: RequestInit) =>  import("node-fetch").then(({ default: fetch }) => fetch(url, init));
 
 var fs = require('fs');
 dotenv.config()
@@ -71,7 +71,9 @@ var drivers = new Map([
     [8, ['Romain Grosjean', 'GRO']]
 ]);
 
+//possibly fixed??
 //setDrivers function resets the 'drivers' map, created bc idk how to get value without popping. :(
+/*
 function setDrivers() {
     drivers.clear()
     drivers = new Map([
@@ -103,7 +105,7 @@ function setDrivers() {
         [8, ['Romain Grosjean', 'GRO']]
     ]);
 }
-
+*/
 
 //                  Command for checking driver stats
 
@@ -125,34 +127,40 @@ client.on('messageCreate', async (message) => {
                 }
                 else {
                     let dCode: string | undefined
-                    dCode = drivers.get(driverNumber)?.pop()
-                    driverName = drivers.get(driverNumber)?.pop()
-                    setDrivers()
-                    //console.log('POPPED!' + drivers)
-                    var statURL = ''
-                    var finalOutString = driverName + ' has\n```'
-                    var outString = ''
-                    var fetchArr: string[] = []
-                    for (let i = 0; i < statArr.length; i++) {
-                        statURL = ''
-                        statURL += 'https://en.wikipedia.org/w/api.php?action=parse&text={{F1stat|'
-                        statURL += dCode + '|' + statArr[i] + '}}&contentmodel=wikitext&format=json'
+                    let reqDriverArray: string[] | undefined = []
+                    reqDriverArray = drivers.get(driverNumber)
+                    if (reqDriverArray != undefined) {
+                        //console.log('driver array value = ' + reqDriverArray[0])
+                        dCode = reqDriverArray[1]
+                        driverName = reqDriverArray[0]
+                        //setDrivers()
+                        //console.log('POPPED!' + drivers)
+                        var statURL = ''
+                        var finalOutString = driverName + ' has\n```'
+                        var outString = ''
+                        var fetchArr: string[] = []
+                        for (let i = 0; i < statArr.length; i++) {
+                            statURL = ''
+                            statURL += 'https://en.wikipedia.org/w/api.php?action=parse&text={{F1stat|'
+                            statURL += dCode + '|' + statArr[i] + '}}&contentmodel=wikitext&format=json'
 
-                        fetchArr.push(statURL)
-                        const fetchedPage = await fetch(fetchArr[i])
-                        const pageData = await fetchedPage.json()
-                        var statString = JSON.stringify(pageData.parse.text)
-                        outString = statString.substring((statString.indexOf('<p>') + 3), (statString.indexOf('n') - 1))
-                        //console.log('outString = \n' + outString)
-                        finalOutString += statStringsArr[i * 2] + outString + statStringsArr[i * 2 + 1] + '\n'
-                        //console.log('finalOutString = \n' + finalOutString)
+                            fetchArr.push(statURL)
+                            const fetchedPage = await fetch(fetchArr[i])
+                            const pageData = await fetchedPage.json()
+                            var statString = JSON.stringify(pageData.parse.text)
+                            outString = statString.substring((statString.indexOf('<p>') + 3), (statString.indexOf('n') - 1))
+                            //console.log('outString = \n' + outString)
+                            finalOutString += statStringsArr[i * 2] + outString + statStringsArr[i * 2 + 1] + '\n'
+                            //console.log('finalOutString = \n' + finalOutString)
 
-                        //console.log('\nstatURL = ' + fetchArr[i])
+                            //console.log('\nstatURL = ' + fetchArr[i])
+                        }
+                        finalOutString += '```'
+                        await message.reply({
+                            content: finalOutString
+                        })
                     }
-                    finalOutString += '```'
-                    await message.reply({
-                        content: finalOutString
-                    })
+
                 }
             }
             else {
@@ -258,6 +266,68 @@ client.on('messageCreate', async (message) => {
 
 
 })
+
+
+var rounds = new Map([[1, "Bahrain Grand Prix"]]);
+client.on("messageCreate", async (message) => {
+    var roundNumber = 1;
+    var roundName: string | undefined = "";
+    function invalidDNumInput() {
+      message.reply({
+        content: "Please enter a valid round number (2022): $quali 1",
+      });
+    }
+    if (
+      message.content.toLowerCase().includes(botChar + "quali") &&
+      message.author.bot == false
+    ) {
+      if (message.content.length >= 7) {
+        roundNumber = Number(message.content.substring(7));
+        if (Number.isFinite(roundNumber)) {
+          if (rounds.get(roundNumber) == undefined) {
+            invalidDNumInput();
+            console.log("this clearly isn't working");
+          } else {
+            roundName = rounds.get(roundNumber);
+  
+            var statURL = "";
+            var finalOutString = roundName + " qualification results\n";
+            var outString = "";
+            statURL = "http://ergast.com/api/f1/2022/";
+            statURL += roundNumber + "/" + "qualifying.json";
+  
+            console.log(statURL);
+  
+            const fetchedPage = await fetch(statURL);
+            const pageData = await fetchedPage.json();
+            let qualiArr = pageData.MRData.RaceTable.Races
+            var statString = JSON.stringify(pageData.MRData.RaceTable.Races);
+            console.log(qualiArr[0].json().season)
+            
+
+  
+            //outString = statString.substring((statString.indexOf('<p>') + 3), (statString.indexOf('n') - 1))
+            //console.log('outString = \n' + outString)
+  
+            //finalOutString += statStringsArr[i * 2] + outString + statStringsArr[i * 2 + 1] + '\n'
+  
+            //console.log('finalOutString = \n' + finalOutString)
+  
+            //console.log('\nstatURL = ' + fetchArr[i])
+
+            //finalOutString += ''
+            await message.reply({
+              content: finalOutString,
+            });
+          }
+        } else {
+          invalidDNumInput();
+        }
+      } else {
+        invalidDNumInput();
+      }
+    }
+  });
 
 
 //              Command for changing character for bot commands
