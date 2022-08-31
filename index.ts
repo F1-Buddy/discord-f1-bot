@@ -319,24 +319,22 @@ client.on("messageCreate", async (message) => {
           console.log("this clearly isn't working");
         } else {
           roundName = rounds.get(roundNumber);
-
           var statURL = "";
-          var finalOutString = roundName + " qualification results\n```";
+          var finalOutString = roundName + " qualification results\n";
           var outString = "";
           statURL = "http://ergast.com/api/f1/2022/";
           statURL += roundNumber + "/" + "qualifying.json";
 
           console.log(statURL);
 
-        //   const fetchedPage = await fetch(statURL);
-        //   const pageData = await fetchedPage.json();
+          const fetchedPage = await fetch(statURL);
+          const pageData = await fetchedPage.json();
+          let qualiArr = pageData.MRData.RaceTable.Races
+          var statString = JSON.stringify(pageData.MRData.RaceTable.Races);
+          console.log(qualiArr)
+          console.log('qresults = '+qualiArr[0])
 
-        //   var statString = JSON.stringify(pageData);
 
-          fetch(statURL)
-            .then((response) => response.text())
-            .then((result) => console.log(result))
-            .catch((error) => console.log("error", error));
 
           //outString = statString.substring((statString.indexOf('<p>') + 3), (statString.indexOf('n') - 1))
           //console.log('outString = \n' + outString)
@@ -347,7 +345,7 @@ client.on("messageCreate", async (message) => {
 
           //console.log('\nstatURL = ' + fetchArr[i])
 
-          //finalOutString += '```'
+          //finalOutString += ''
           await message.reply({
             content: finalOutString,
           });
@@ -360,6 +358,7 @@ client.on("messageCreate", async (message) => {
     }
   }
 });
+
 
 //              Command for changing character for bot commands
 
