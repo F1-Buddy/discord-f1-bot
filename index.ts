@@ -28,16 +28,11 @@ settingsString = ''
 var botChar = '' + settingsArr[0].substring(5, 6)
 
 
-console.log(botChar + ' is current bot character')
+console.log(botChar + ' is current bot prefix')
 
 client.on('ready', () => {
     console.log('Bot ready')
 })
-
-
-
-
-
 
 
 var statArr: string[] = ['starts', 'wins', 'podiums', 'careerpoints', 'poles', 'fastestlaps']
@@ -284,9 +279,10 @@ async function getRounds() {
         }
     }
 }
+getRounds()
 
 client.on("messageCreate", async (message) => {
-    getRounds()
+
     var roundNumber = 1;
     var roundName: string | unknown = "";
     function invalidDNumInput() {
@@ -296,7 +292,8 @@ client.on("messageCreate", async (message) => {
     }
     if (
         message.content.toLowerCase().includes(botChar + "quali") &&
-        message.author.bot == false
+        message.author.bot == false && (message.content.toLowerCase().indexOf(botChar) == 0) &&
+        (message.content.toLowerCase().indexOf('quali') == 1)
     ) {
         if (message.content.length >= 7) {
             roundNumber = Number(message.content.substring(7));
@@ -383,19 +380,21 @@ client.on("messageCreate", async (message) => {
 client.on('messageCreate', (message) => {
     if (message.author.bot == false) {
         if (message.content.toLowerCase().includes(botChar + 'change', 0)) {
-            console.log('prefix changed to '+message.content[8])
-            botChar = message.content[message.content.indexOf('change') + 7]
-            settingsArr[0] = 'char=' + botChar
-            for (let i = 0; i < settingsArr.length; i++) {
-                settingsString += settingsArr[i] + '\n'
+            if (message.content.length >= 8) {
+                console.log('prefix changed to ' + message.content[8])
+                botChar = message.content[message.content.indexOf('change') + 7]
+                settingsArr[0] = 'char=' + botChar
+                for (let i = 0; i < settingsArr.length; i++) {
+                    settingsString += settingsArr[i] + '\n'
+                }
+                fs.writeFileSync('settings.txt', settingsString, (err: any) => {
+                    if (err) throw err;
+                })
+                settingsString = ''
+                message.reply({
+                    content: 'Bot prefix changed to ' + botChar,
+                })
             }
-            fs.writeFileSync('settings.txt', settingsString, (err: any) => {
-                if (err) throw err;
-            })
-            settingsString = ''
-            message.reply({
-                content: 'Bot character changed to ' + botChar,
-            })
         }
     }
 })
