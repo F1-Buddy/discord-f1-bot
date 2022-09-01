@@ -9,3 +9,4 @@
 - [x] Fix stat fetch
 - [ ] Fix quali formatting
 - [ ] Add standings command ($wdc / $wcc)
+
