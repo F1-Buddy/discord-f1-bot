@@ -142,11 +142,7 @@ client.on('messageCreate', async (message) => {
       } else {
         invalidDNumInput();
       }
-    } else {
-      invalidDNumInput();
-    }
-  }
-});
+    });
 
 //                  Command for checking Next F1 Event
 var calendarURL =
@@ -260,7 +256,7 @@ client.on("messageCreate", async (message) => {
 // command to get qualification times based on round
 client.on("messageCreate", async (message) => {
   var roundNumber = 1;
-  var roundName: string | undefined = "";
+  var roundName: string | unknown = "";
   function invalidDNumInput() {
     message.reply({
       content: "Please enter a valid round number (2022): $quali 1",
@@ -455,8 +451,7 @@ client.on('messageCreate', (message) => {
         }
 
     }
-  }
-});
+  });
 
 //              Help Command
 client.on("messageCreate", (message) => {
