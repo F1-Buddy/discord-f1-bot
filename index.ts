@@ -24,38 +24,21 @@ const client = new DiscordJS.Client({
 var settingsArr: string[] = [];
 var settingsString = fs.readFileSync("settings.txt").toString();
 //console.log(settingsString)
-settingsArr = settingsString.split("\n");
-settingsString = "";
-var botChar = "" + settingsArr[0].substring(5, 6);
+settingsArr = settingsString.split('\n')
+settingsString = ''
+var botChar = '' + settingsArr[0].substring(5, 6)
 
-console.log(botChar + " is current bot character");
 
-client.on("ready", () => {
-  console.log("Bot ready");
-});
+console.log(botChar + ' is current bot prefix')
 
-var statArr: string[] = [
-  "starts",
-  "wins",
-  "podiums",
-  "careerpoints",
-  "poles",
-  "fastestlaps",
-];
-var statStringsArr: string[] = [
-  "Started ",
-  " times",
-  "Won ",
-  " times",
-  "Been on the podium ",
-  " times",
-  "Scored ",
-  " points",
-  "Claimed ",
-  " poles",
-  "Claimed ",
-  " fastest laps",
-];
+client.on('ready', () => {
+    console.log('Bot ready')
+})
+
+
+var statArr: string[] = ['starts', 'wins', 'podiums', 'careerpoints', 'poles', 'fastestlaps']
+var statStringsArr: string[] = ['Started ', ' times', 'Won ', ' times', 'Been on the podium ', ' times', 'Scored ', ' points', 'Claimed ', ' poles', 'Claimed ', ' fastest laps']
+
 var drivers = new Map([
   [33, ["Max Verstappen", "VER"]],
   [1, ["Max Verstappen", "VER"]],
@@ -85,100 +68,76 @@ var drivers = new Map([
   [8, ["Romain Grosjean", "GRO"]],
 ]);
 
-var rounds = new Map([[1, "Bahrain Grand Prix"]]);
+//possibly fixed??
 
 //setDrivers function resets the 'drivers' map, created bc idk how to get value without popping. :(
-function setDrivers() {
-  drivers.clear();
-  drivers = new Map([
-    [33, ["Max Verstappen", "VER"]],
-    [1, ["Max Verstappen", "VER"]],
-    [11, ["Sergio Pérez", "PER"]],
-    [16, ["Charles Leclerc", "LEC"]],
-    [55, ["Carlos Sainz_Jr.", "SAI"]],
-    [63, ["George Russell", "RUS"]],
-    [44, ["Lewis Hamilton", "HAM"]],
-    [23, ["Alex Albon", "ALB"]],
-    [6, ["Nicholas Latifi", "LAT"]],
-    [14, ["Fernando Alonso", "ALO"]],
-    [30, ["Esteban Ocon", "OCO"]],
-    [77, ["Valtteri Bottas", "BOT"]],
-    [24, ["Zhou Guanyu", "ZHO"]],
-    [10, ["Pierre Gasly", "GAS"]],
-    [22, ["Yuki Tsunoda", "TSU"]],
-    [20, ["Kevin Magnussen", "MAG"]],
-    [47, ["Mick Schumacher", "SCH"]],
-    [4, ["Lando Norris", "NOR"]],
-    [3, ["Daniel Ricciardo", "RIC"]],
-    [18, ["Lance Stroll", "STR"]],
-    [5, ["Sebastian Vettel", "VET"]],
-    [99, ["Antonio Giovinazzi", "GIO"]],
-    [88, ["Robert Kubica", "KUB"]],
-    [9, ["Nikita Mazepin", "MAZ"]],
-    [26, ["Daniil Kvyat", "KVY"]],
-    [8, ["Romain Grosjean", "GRO"]],
-  ]);
-}
+/*
+
+*/
 
 //                  Command for checking driver stats
 
-client.on("messageCreate", async (message) => {
-  var driverNumber = 0;
-  var driverName: string | undefined = "";
-  function invalidDNumInput() {
-    message.reply({
-      content: "Please enter a valid driver number (2020 - 2022): $driver 33",
-    });
-  }
-  if (
-    message.content.toLowerCase().includes(botChar + "driver") &&
-    message.author.bot == false
-  ) {
-    if (message.content.length >= 8) {
-      driverNumber = Number(message.content.substring(8));
-      //console.log('driverNumber = ' + driverNumber)
-      if (Number.isFinite(driverNumber)) {
-        if (drivers.get(driverNumber) == undefined) {
-          invalidDNumInput();
-        } else {
-          let dCode: string | undefined;
-          dCode = drivers.get(driverNumber)?.pop();
-          driverName = drivers.get(driverNumber)?.pop();
-          setDrivers();
-          //console.log('POPPED!' + drivers)
-          var statURL = "";
-          var finalOutString = driverName + " has\n```";
-          var outString = "";
-          var fetchArr: string[] = [];
-          for (let i = 0; i < statArr.length; i++) {
-            statURL = "";
-            statURL +=
-              "https://en.wikipedia.org/w/api.php?action=parse&text={{F1stat|";
-            statURL +=
-              dCode + "|" + statArr[i] + "}}&contentmodel=wikitext&format=json";
+client.on('messageCreate', async (message) => {
+    var driverNumber = 0
+    var driverName: string | undefined = ''
+    function invalidDNumInput() {
+        message.reply({
+            content: 'Please enter a valid driver number (2020 - 2022): $driver 33'
+        })
+    }
+    if (message.content.toLowerCase().includes(botChar + 'driver') && message.author.bot == false) {
+        if (message.content.length >= 8) {
+            driverNumber = (Number)(message.content.substring(8))
+            //console.log('driverNumber = ' + driverNumber)
+            if (Number.isFinite(driverNumber)) {
+                if (drivers.get(driverNumber) == undefined) {
+                    invalidDNumInput()
+                }
+                else {
+                    let dCode: string | undefined
+                    let reqDriverArray: string[] | undefined = []
+                    reqDriverArray = drivers.get(driverNumber)
+                    if (reqDriverArray != undefined) {
+                        //console.log('driver array value = ' + reqDriverArray[0])
+                        dCode = reqDriverArray[1]
+                        driverName = reqDriverArray[0]
+                        //setDrivers()
+                        //console.log('POPPED!' + drivers)
+                        var statURL = ''
+                        var finalOutString = driverName + ' has\n```'
+                        var outString = ''
+                        var fetchArr: string[] = []
+                        for (let i = 0; i < statArr.length; i++) {
+                            statURL = ''
+                            statURL += 'https://en.wikipedia.org/w/api.php?action=parse&text={{F1stat|'
+                            statURL += dCode + '|' + statArr[i] + '}}&contentmodel=wikitext&format=json'
 
-            fetchArr.push(statURL);
-            const fetchedPage = await fetch(fetchArr[i]);
-            const pageData = await fetchedPage.json();
-            var statString = JSON.stringify(pageData.parse.text);
-            outString = statString.substring(
-              statString.indexOf("<p>") + 3,
-              statString.indexOf("n") - 1
-            );
-            //console.log('outString = \n' + outString)
-            finalOutString +=
-              statStringsArr[i * 2] +
-              outString +
-              statStringsArr[i * 2 + 1] +
-              "\n";
-            //console.log('finalOutString = \n' + finalOutString)
+                            fetchArr.push(statURL)
+                            const fetchedPage = await fetch(fetchArr[i])
+                            const pageData = await fetchedPage.json()
+                            var statString = JSON.stringify(pageData.parse.text)
+                            outString = statString.substring((statString.indexOf('<p>') + 3), (statString.indexOf('n') - 1))
+                            //console.log('outString = \n' + outString)
+                            finalOutString += statStringsArr[i * 2] + outString + statStringsArr[i * 2 + 1] + '\n'
+                            //console.log('finalOutString = \n' + finalOutString)
 
-            //console.log('\nstatURL = ' + fetchArr[i])
-          }
-          finalOutString += "```";
-          await message.reply({
-            content: finalOutString,
-          });
+                            //console.log('\nstatURL = ' + fetchArr[i])
+                        }
+                        finalOutString += '```'
+                        await message.reply({
+                            content: finalOutString
+                        })
+                    }
+
+                }
+            }
+            else {
+                invalidDNumInput()
+            }
+        }
+        else {
+            invalidDNumInput()
+
         }
       } else {
         invalidDNumInput();
@@ -360,25 +319,141 @@ client.on("messageCreate", async (message) => {
 });
 
 
+var rounds = new Map([]);
+var icsAsString = ''
+var icsArr = []
+//rounds.set(1, "Bahrain Grand Prix")
+async function getRounds() {
+    const fetchedPage = await fetch(calendarURL)
+    icsAsString = await fetchedPage.text()
+    icsArr = icsAsString.split('\n')
+    for (let i = 0, c = 1; i < icsArr.length; i++) {
+        if (icsArr[i].includes(' - Qualifying')) {
+            //console.log(icsArr[i])
+            rounds.set(c, icsArr[i].substring(8, icsArr[i].length - 1))
+            c++
+        }
+    }
+}
+getRounds()
+
+client.on("messageCreate", async (message) => {
+
+    var roundNumber = 1;
+    var roundName: string | unknown = "";
+    function invalidDNumInput() {
+        message.reply({
+            content: "Please enter a valid round number (2022): $quali 1",
+        });
+    }
+    if (
+        message.content.toLowerCase().includes(botChar + "quali") &&
+        message.author.bot == false && (message.content.toLowerCase().indexOf(botChar) == 0) &&
+        (message.content.toLowerCase().indexOf('quali') == 1)
+    ) {
+        if (message.content.length >= 7) {
+            roundNumber = Number(message.content.substring(7));
+            if (Number.isFinite(roundNumber)) {
+                if (rounds.get(roundNumber) == undefined) {
+                    invalidDNumInput();
+                    //console.log("this clearly isn't working");
+                } else {
+                    roundName = rounds.get(roundNumber);
+
+                    var statURL = "";
+                    var finalOutString = roundName + " results:\n\n";
+                    var outString = "";
+                    statURL = "http://ergast.com/api/f1/2022/";
+                    statURL += roundNumber + "/" + "qualifying.json";
+
+                    //console.log(statURL);
+
+                    const fetchedPage = await fetch(statURL);
+                    const pageData = await fetchedPage.json();
+                    if (pageData.MRData.RaceTable.Races.length != 0) {
+                        var qualiArr = pageData.MRData.RaceTable.Races[0].QualifyingResults;
+                        for (let i = 0; i < qualiArr.length; i++) {
+                            var positionString = 'P' + pageData.MRData.RaceTable.Races[0].QualifyingResults[i].position
+                            var driverNameString = pageData.MRData.RaceTable.Races[0].QualifyingResults[i].Driver.givenName + ' ' +
+                                pageData.MRData.RaceTable.Races[0].QualifyingResults[i].Driver.familyName
+                            var q1Time = pageData.MRData.RaceTable.Races[0].QualifyingResults[i].Q1
+                            var q2Time = pageData.MRData.RaceTable.Races[0].QualifyingResults[i].Q2
+                            var q3Time = pageData.MRData.RaceTable.Races[0].QualifyingResults[i].Q3
+                            finalOutString += '```c\n'
+                            finalOutString += positionString + '\n\n' + driverNameString + '\n'
+                            if (q3Time != undefined) {
+                                finalOutString += 'Q3 Time = ' + q3Time + '\n'
+                            }
+                            if (q2Time != undefined) {
+                                finalOutString += 'Q2 Time = ' + q2Time + '\n'
+                            }
+                            if (q1Time != undefined) {
+                                finalOutString += 'Q1 Time = ' + q1Time + '\n'
+                            }
+                            finalOutString += '```'
+                            // console.log('\n')
+                            // console.log(pageData.MRData.RaceTable.Races[0].QualifyingResults[i].Driver.givenName + ' ' +
+                            //             pageData.MRData.RaceTable.Races[0].QualifyingResults[i].Driver.familyName
+                            // )
+                            // console.log('P'+pageData.MRData.RaceTable.Races[0].QualifyingResults[i].position)
+                        }
+                    }
+                    else {
+                        finalOutString = 'Please enter a round number that has occured'
+                    }
+
+                    //console.log(finalOutString)
+
+
+
+                    //outString = statString.substring((statString.indexOf('<p>') + 3), (statString.indexOf('n') - 1))
+                    //console.log('outString = \n' + outString)
+
+                    //finalOutString += statStringsArr[i * 2] + outString + statStringsArr[i * 2 + 1] + '\n'
+
+                    //console.log('finalOutString = \n' + finalOutString)
+
+                    //console.log('\nstatURL = ' + fetchArr[i])
+
+                    //finalOutString += ''
+                    await message.reply({
+                        content: finalOutString,
+                    });
+                }
+            } else {
+                invalidDNumInput();
+            }
+        } else {
+            invalidDNumInput();
+        }
+    }
+});
+
+
 //              Command for changing character for bot commands
 
 // add checks for command character, thanks jubayer
-client.on("messageCreate", (message) => {
-  if (message.author.bot == false) {
-    if (message.content.toLowerCase().includes(botChar + "change", 0)) {
-      console.log(message.content[8]);
-      botChar = message.content[message.content.indexOf("change") + 7];
-      settingsArr[0] = "char=" + botChar;
-      for (let i = 0; i < settingsArr.length; i++) {
-        settingsString += settingsArr[i] + "\n";
-      }
-      fs.writeFileSync("settings.txt", settingsString, (err: any) => {
-        if (err) throw err;
-      });
-      settingsString = "";
-      message.reply({
-        content: "Bot character changed to " + botChar,
-      });
+
+client.on('messageCreate', (message) => {
+    if (message.author.bot == false) {
+        if (message.content.toLowerCase().includes(botChar + 'change', 0)) {
+            if (message.content.length >= 8) {
+                console.log('prefix changed to ' + message.content[8])
+                botChar = message.content[message.content.indexOf('change') + 7]
+                settingsArr[0] = 'char=' + botChar
+                for (let i = 0; i < settingsArr.length; i++) {
+                    settingsString += settingsArr[i] + '\n'
+                }
+                fs.writeFileSync('settings.txt', settingsString, (err: any) => {
+                    if (err) throw err;
+                })
+                settingsString = ''
+                message.reply({
+                    content: 'Bot prefix changed to ' + botChar,
+                })
+            }
+        }
+
     }
   }
 });
